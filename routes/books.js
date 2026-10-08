@@ -13,8 +13,8 @@ router.get("/:id", booksControllers.getSingle);
 
 // CREATE (protected by GitHub OAuth)
 router.post("/", requireAuth, (req, res, next) => {
-	/* #swagger.security = [{ "Bearer": [] }] */
-	/* #swagger.parameters['body'] = {
+	swagger.security = [{ "Bearer": [] }] 
+	swagger.parameters['body'] = {
 		in: 'body',
 		required: true,
 		schema: {
@@ -26,14 +26,14 @@ router.post("/", requireAuth, (req, res, next) => {
 			pages: 100,
 			summary: "Example summary"
 		}
-	} */
+	} 
 	booksControllers.createBook(req, res, next);
 });
 
 // UPDATE (protected by GitHub OAuth)
 router.put("/:id", requireAuth, (req, res, next) => {
-	/* #swagger.security = [{ "Bearer": [] }] */
-	/* #swagger.parameters['body'] = {
+	swagger.security = [{ "Bearer": [] }]
+	swagger.parameters['body'] = {
 		in: 'body',
 		required: true,
 		schema: {
@@ -45,7 +45,7 @@ router.put("/:id", requireAuth, (req, res, next) => {
 			pages: 100,
 			summary: "Example summary"
 		}
-	} */
+	} 
 	booksControllers.updateBook(req, res, next);
 });
 

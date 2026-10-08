@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const jwt = require("jsonwebtoken");
 const { requireAuth } = require("../middleware/auth");
 
 const GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize";
@@ -16,10 +15,11 @@ const getCallbackUrl = (req) =>
   process.env.CALLBACK_URL ||
   `${req.protocol}://${req.get("host")}/auth/github/callback`;
 
-// STEP 1: send the browser to GitHub's consent screen
+// Start GitHub OAuth
 router.get("/github", (req, res, next) => {
   try {
     //#swagger.tags=["Auth"]
+
     if (!process.env.GITHUB_CLIENT_ID) {
       throw createError(500, "GITHUB_CLIENT_ID is not configured.");
     }
@@ -36,11 +36,11 @@ router.get("/github", (req, res, next) => {
   }
 });
 
-// STEP 2: GitHub redirects back here with a code, we exchange it for the
-// user's GitHub profile and respond with a JWT for the protected endpoints
+// GitHub OAuth callback
 router.get("/github/callback", async (req, res, next) => {
   try {
     //#swagger.tags=["Auth"]
+
     const { code } = req.query;
 
     if (!code) {
@@ -49,10 +49,6 @@ router.get("/github/callback", async (req, res, next) => {
 
     if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
       throw createError(500, "GitHub OAuth is not configured.");
-    }
-
-    if (!process.env.JWT_SECRET) {
-      throw createError(500, "JWT_SECRET is not configured.");
     }
 
     const tokenResponse = await fetch(GITHUB_TOKEN_URL, {
@@ -70,10 +66,12 @@ router.get("/github/callback", async (req, res, next) => {
 
     const tokenData = await tokenResponse.json();
 
-    if (tokenData.error) {
+    if (tokenData.error || !tokenData.access_token) {
       throw createError(
         401,
-        `GitHub OAuth failed: ${tokenData.error_description || tokenData.error}`,
+        `GitHub OAuth failed: ${
+          tokenData.error_description || tokenData.error || "No access token returned."
+        }`,
       );
     }
 
@@ -100,12 +98,10 @@ router.get("/github/callback", async (req, res, next) => {
       name: githubUser.name,
     };
 
-    const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
-
     res.status(200).json({
       message:
-        "GitHub OAuth login successful. Use this token on protected endpoints as 'Authorization: Bearer <token>'.",
-      token,
+        "GitHub OAuth login successful. Use the OAuth access token as 'Bearer <token>' on protected endpoints.",
+      accessToken: tokenData.access_token,
       user,
     });
   } catch (err) {
@@ -113,17 +109,22 @@ router.get("/github/callback", async (req, res, next) => {
   }
 });
 
-// who am I? (requires a valid token)
+// Get authenticated GitHub user
 router.get("/user", requireAuth, (req, res) => {
   //#swagger.tags=["Auth"]
-  res.status(200).json({ user: req.user });
+
+  res.status(200).json({
+    user: req.user,
+  });
 });
 
-// stateless JWT: the client just discards its token
+// Logout
 router.get("/logout", (req, res) => {
   //#swagger.tags=["Auth"]
+
   res.status(200).json({
-    message: "Logged out. Discard the token stored on the client.",
+    message:
+      "Logged out. Remove the GitHub OAuth access token from the client.",
   });
 });
 

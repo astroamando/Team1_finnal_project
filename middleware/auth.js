@@ -1,29 +1,45 @@
-const jwt = require("jsonwebtoken");
+const GITHUB_USER_URL = "https://api.github.com/user";
 
-const requireAuth = (req, res, next) => {
+const requireAuth = async (req, res, next) => {
   const header = req.get("Authorization") || "";
   const [scheme, token] = header.split(" ");
 
   if (scheme !== "Bearer" || !token) {
     return res.status(401).json({
       message:
-        "Unauthorized: send a valid token in the Authorization header as 'Bearer <token>'.",
+        "Unauthorized: provide your GitHub OAuth access token as 'Bearer <token>'.",
     });
   }
 
-  if (!process.env.JWT_SECRET) {
-    return res
-      .status(500)
-      .json({ message: "Server configuration error: JWT_SECRET is not set." });
-  }
-
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    const response = await fetch(GITHUB_USER_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+        "User-Agent": "Team1-Library-API",
+      },
+    });
+
+    if (!response.ok) {
+      return res.status(401).json({
+        message: "Unauthorized: invalid or expired GitHub OAuth token.",
+      });
+    }
+
+    const githubUser = await response.json();
+
+    req.user = {
+      githubId: githubUser.id,
+      login: githubUser.login,
+      name: githubUser.name,
+    };
+
     next();
   } catch (err) {
-    return res
-      .status(401)
-      .json({ message: "Unauthorized: invalid or expired token." });
+    console.error("OAuth authentication error:", err);
+    return res.status(500).json({
+      message: "Authentication service error.",
+    });
   }
 };
 

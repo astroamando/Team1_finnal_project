@@ -3,8 +3,6 @@ const request = require("supertest");
 const sinon = require("sinon");
 const { ObjectId } = require("mongodb");
 
-process.env.JWT_SECRET = process.env.JWT_SECRET || "unit-test-secret";
-
 const mongodb = require("../data/database");
 const app = require("../app");
 
