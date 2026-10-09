@@ -249,3 +249,51 @@ describe("OAuth protected endpoints", () => {
     expect(res.body.message).to.include("Unauthorized");
   });
 });
+
+describe("GET endpoint edge cases", () => {
+  beforeEach(() => {
+    stubDatabase();
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it("GET /authors/:id returns 400 for an invalid id", async () => {
+    const res = await request(app).get("/authors/not-a-valid-id");
+
+    expect(res.status).to.equal(400);
+    expect(res.body.message).to.be.a("string");
+  });
+
+  it("GET /categories/:id returns 400 for an invalid id", async () => {
+    const res = await request(app).get("/categories/not-a-valid-id");
+
+    expect(res.status).to.equal(400);
+    expect(res.body.message).to.be.a("string");
+  });
+
+  it("GET /books/:id returns 404 when the book does not exist", async () => {
+    const res = await request(app).get(`/books/${new ObjectId()}`);
+
+    expect(res.status).to.equal(404);
+  });
+
+  it("GET /authors/:id returns 404 when the author does not exist", async () => {
+    const res = await request(app).get(`/authors/${new ObjectId()}`);
+
+    expect(res.status).to.equal(404);
+  });
+
+  it("GET /categories/:id returns 404 when the category does not exist", async () => {
+    const res = await request(app).get(`/categories/${new ObjectId()}`);
+
+    expect(res.status).to.equal(404);
+  });
+
+  it("GET /members/:id returns 404 when the member does not exist", async () => {
+    const res = await request(app).get(`/members/${new ObjectId()}`);
+
+    expect(res.status).to.equal(404);
+  });
+});
