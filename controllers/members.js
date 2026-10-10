@@ -25,13 +25,59 @@ const requiredEmail = (value, field) => {
   return email;
 };
 
-const requieredMinLenghtString = (value, field, minLenght) => {
-  const item = requiredString(value, field);
+const requieredMinLenght = (value, field, minLenght) => {
+  // DEBUG: Log the lenght of the value
+  // console.log(value + " is " + value.length + " characters long");
 
-  if (item.length() != minLenght) {
+  if (value.length < minLenght) {
     throw createError(
       400,
       `${field} must be at least ${minLenght} characters long.`,
+    );
+  }
+
+  // these two validators don't return anything, they serve as middleware-like functions.
+  return;
+};
+
+const requieredMaxLenght = (value, field, maxLenght) => {
+  // DEBUG: Log the lenght of the value
+  // console.log(value + " is " + value.length + " characters long");
+
+  if (value.length > maxLenght) {
+    throw createError(
+      400,
+      `${field} must be less than ${maxLenght} characters long.`,
+    );
+  }
+
+  // these two validators don't return anything, they serve as middleware-like functions.
+  return;
+};
+
+const requieredValidPhone = (value, field) => {
+  // set the min & max values
+  const minLenght = 8;
+  const maxLenght = 18;
+
+  // validate against all of the requierements
+  // firsdt check if it's an string, then continue with the validation.
+  const item = requiredString(value, field);
+  requieredMinLenght(value, field, minLenght);
+  requieredMaxLenght(value, field, maxLenght);
+
+  // once the validation is done, return the item
+  return item;
+};
+
+const requieredValidMembershipType = (value, field) => {
+  const item = requiredString(value, field);
+  const validMembershipTypes = ["Free", "Bronze", "Silver", "Gold"];
+
+  if (!validMembershipTypes.includes(value)) {
+    throw createError(
+      400,
+      `The membership must be one of the valid types: 'Free', 'Bronze', 'Silver' or 'Gold'`,
     );
   }
 
@@ -47,8 +93,8 @@ const validateMemberData = (data) => {
     firstName: requiredString(data.firstName, "Member firstName"),
     lastName: requiredString(data.lastName, "Member lastName"),
     email: requiredEmail(data.email, "Member email"),
-    phone: requieredMinLenghtString(data.phone, "Member phone"),
-    membershipType: requiredString(
+    phone: requieredValidPhone(data.phone, "Member phone"),
+    membershipType: requieredValidMembershipType(
       data.membershipType,
       "Member membershipType",
     ),

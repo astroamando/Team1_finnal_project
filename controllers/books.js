@@ -23,6 +23,96 @@ const requiredInteger = (value, field) => {
   return value;
 };
 
+const requieredMinLenght = (value, field, minLenght) => {
+  // DEBUG: Log the lenght of the value
+  // console.log(value + " is " + value.length + " characters long");
+
+  if (value.length < minLenght) {
+    throw createError(
+      400,
+      `${field} must be at least ${minLenght} characters long.`,
+    );
+  }
+
+  // these two validators don't return anything, they serve as middleware-like functions.
+  return;
+};
+
+const requieredMaxLenght = (value, field, maxLenght) => {
+  // DEBUG: Log the lenght of the value
+  // console.log(value + " is " + value.length + " characters long");
+
+  if (value.length > maxLenght) {
+    throw createError(
+      400,
+      `${field} must be less than ${maxLenght} characters long.`,
+    );
+  }
+
+  // these two validators don't return anything, they serve as middleware-like functions.
+  return;
+};
+
+const requieredValidAuthorIDCategoryID = (value, field) => {
+  // set the min & max values
+  const minLenght = 4;
+  const maxLenght = 4;
+
+  // validate against all of the requierements
+  // firsdt check if it's an string, then continue with the validation.
+  const item = requiredString(value, field);
+  requieredMinLenght(value, field, minLenght);
+  requieredMaxLenght(value, field, maxLenght);
+
+  // once the validation is done, return the item
+  return item;
+};
+
+const requieredValidYear = (value, field) => {
+  // set the min & max values
+  const minLenght = 4;
+  const maxLenght = 4;
+
+  // validate against all of the requierements
+  // firsdt check if it's an int, then continue with the validation.
+  const item = requiredInteger(value, field);
+  requieredMinLenght(value, field, minLenght);
+  requieredMaxLenght(value, field, maxLenght);
+
+  // once the validation is done, return the item
+  return item;
+};
+
+const requieredValidISBN = (value, field) => {
+  // set the min & max values
+  const minLenght = 10;
+  const maxLenght = 17;
+
+  // validate against all of the requierements
+  // firsdt check if it's an int, then continue with the validation.
+  const item = requiredString(value, field);
+  requieredMinLenght(value, field, minLenght);
+  requieredMaxLenght(value, field, maxLenght);
+
+  // once the validation is done, return the item
+  return item;
+};
+
+const requieredValidSummary = (value, field) => {
+  // set the min & max values
+  const minLenght = 30;
+  const maxLenght = 700;
+
+  // validate against all of the requierements
+  // firsdt check if it's an int, then continue with the validation.
+  const item = requiredString(value, field);
+  requieredMinLenght(value, field, minLenght);
+  requieredMaxLenght(value, field, maxLenght);
+
+  // once the validation is done, return the item
+  return item;
+};
+
 const validateBookData = (data) => {
   if (!data || typeof data !== "object") {
     throw createError(400, "Book data is required.");
@@ -30,12 +120,15 @@ const validateBookData = (data) => {
 
   return {
     title: requiredString(data.title, "Book title"),
-    isbn: requiredString(data.isbn, "Book isbn"),
-    authorId: requiredString(data.authorId, "Book authorId"),
-    categoryId: requiredString(data.categoryId, "Book categoryId"),
-    publishedYear: requiredInteger(data.publishedYear, "Book publishedYear"),
+    isbn: requieredValidISBN(data.isbn, "Book isbn"),
+    authorId: requieredValidAuthorIDCategoryID(data.authorId, "Book authorId"),
+    categoryId: requieredValidAuthorIDCategoryID(
+      data.categoryId,
+      "Book categoryId",
+    ),
+    publishedYear: requieredValidYear(data.publishedYear, "Book publishedYear"),
     pages: requiredInteger(data.pages, "Book pages"),
-    summary: requiredString(data.summary, "Book summary"),
+    summary: requieredValidSummary(data.summary, "Book summary"),
   };
 };
 

@@ -5,10 +5,10 @@
     "description": "Library Managment API - CSE 341 - Team 01",
     "version": "1.0.0"
   },
-  "host": "localhost:5000",
+  "host": "team1-finnal-project.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "securityDefinitions": {
     "Bearer": {
@@ -96,7 +96,7 @@
                 },
                 "summary": {
                   "type": "string",
-                  "example": "Example summary"
+                  "example": "Example summary - Lorem ipsum dolor sit amet, consectetur adipiscing."
                 }
               }
             }
@@ -191,7 +191,7 @@
                 },
                 "summary": {
                   "type": "string",
-                  "example": "Example summary"
+                  "example": "Example summary - Lorem ipsum dolor sit amet, consectetur adipiscing."
                 }
               }
             }
@@ -665,7 +665,7 @@
                 },
                 "membershipType": {
                   "type": "string",
-                  "example": "Student"
+                  "example": "Free"
                 }
               }
             }
@@ -746,7 +746,7 @@
                 },
                 "membershipType": {
                   "type": "string",
-                  "example": "Graduate Student"
+                  "example": "Free"
                 }
               }
             }

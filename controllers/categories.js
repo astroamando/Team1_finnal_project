@@ -15,6 +15,51 @@ const requiredString = (value, field) => {
   return value.trim();
 };
 
+const requieredMinLenght = (value, field, minLenght) => {
+  // DEBUG: Log the lenght of the value
+  // console.log(value + " is " + value.length + " characters long");
+
+  if (value.length < minLenght) {
+    throw createError(
+      400,
+      `${field} must be at least ${minLenght} characters long.`,
+    );
+  }
+
+  // these two validators don't return anything, they serve as middleware-like functions.
+  return;
+};
+
+const requieredMaxLenght = (value, field, maxLenght) => {
+  // DEBUG: Log the lenght of the value
+  // console.log(value + " is " + value.length + " characters long");
+
+  if (value.length > maxLenght) {
+    throw createError(
+      400,
+      `${field} must be less than ${maxLenght} characters long.`,
+    );
+  }
+
+  // these two validators don't return anything, they serve as middleware-like functions.
+  return;
+};
+
+const requieredValidCategory = (value, field) => {
+  // set the min & max values
+  const minLenght = 30;
+  const maxLenght = 500;
+
+  // validate against all of the requierements
+  // firsdt check if it's an string, then continue with the validation.
+  const item = requiredString(value, field);
+  requieredMinLenght(value, field, minLenght);
+  requieredMaxLenght(value, field, maxLenght);
+
+  // once the validation is done, return the item
+  return item;
+};
+
 const validateCategoryData = (data) => {
   if (!data || typeof data !== "object") {
     throw createError(400, "Category data is required.");
@@ -22,7 +67,10 @@ const validateCategoryData = (data) => {
 
   return {
     name: requiredString(data.name, "Category name"),
-    description: requiredString(data.description, "Category description"),
+    description: requieredValidCategory(
+      data.description,
+      "Category description",
+    ),
   };
 };
 

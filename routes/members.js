@@ -21,7 +21,7 @@ router.post("/", requireAuth, (req, res, next) => {
 			lastName: "Smith",
 			email: "jordan.smith@example.com",
 			phone: "208-555-0142",
-			membershipType: "Student"
+			membershipType: "Free"
 		}
 	} */
   membersControllers.createMember(req, res, next);
@@ -37,7 +37,7 @@ router.put("/:id", requireAuth, (req, res, next) => {
 			lastName: "Smith",
 			email: "jordan.smith@example.com",
 			phone: "208-555-0142",
-			membershipType: "Graduate Student"
+			membershipType: "Free"
 		}
 	} */
   membersControllers.updateMember(req, res, next);

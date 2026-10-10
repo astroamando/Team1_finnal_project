@@ -23,6 +23,51 @@ const stringArray = (value, field) => {
   return value.map((item) => item.trim());
 };
 
+const requieredMinLenght = (value, field, minLenght) => {
+  // DEBUG: Log the lenght of the value
+  // console.log(value + " is " + value.length + " characters long");
+
+  if (value.length < minLenght) {
+    throw createError(
+      400,
+      `${field} must be at least ${minLenght} characters long.`,
+    );
+  }
+
+  // these two validators don't return anything, they serve as middleware-like functions.
+  return;
+};
+
+const requieredMaxLenght = (value, field, maxLenght) => {
+  // DEBUG: Log the lenght of the value
+  // console.log(value + " is " + value.length + " characters long");
+
+  if (value.length > maxLenght) {
+    throw createError(
+      400,
+      `${field} must be less than ${maxLenght} characters long.`,
+    );
+  }
+
+  // these two validators don't return anything, they serve as middleware-like functions.
+  return;
+};
+
+const requieredValidBirthDate = (value, field) => {
+  // set the min & max values
+  const minLenght = 10;
+  const maxLenght = 10;
+
+  // validate against all of the requierements
+  // firsdt check if it's an String, then continue with the validation.
+  const item = requiredString(value, field);
+  requieredMinLenght(value, field, minLenght);
+  requieredMaxLenght(value, field, maxLenght);
+
+  // once the validation is done, return the item
+  return item;
+};
+
 const validateAuthorData = (data) => {
   if (!data || typeof data !== "object") {
     throw createError(400, "Author data is required.");
@@ -31,7 +76,7 @@ const validateAuthorData = (data) => {
   return {
     firstName: requiredString(data.firstName, "Author firstName"),
     lastName: requiredString(data.lastName, "Author lastName"),
-    birthDate: requiredString(data.birthDate, "Author birthDate"),
+    birthDate: requieredValidBirthDate(data.birthDate, "Author birthDate"),
     nationality: requiredString(data.nationality, "Author nationality"),
     biography: requiredString(data.biography, "Author biography"),
     books: stringArray(data.books, "Author books"),
