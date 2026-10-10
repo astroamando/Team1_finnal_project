@@ -25,6 +25,19 @@ const requiredEmail = (value, field) => {
   return email;
 };
 
+const requieredMinLenghtString = (value, field, minLenght) => {
+  const item = requiredString(value, field);
+
+  if (item.length() != minLenght) {
+    throw createError(
+      400,
+      `${field} must be at least ${minLenght} characters long.`,
+    );
+  }
+
+  return item;
+};
+
 const validateMemberData = (data) => {
   if (!data || typeof data !== "object") {
     throw createError(400, "Member data is required.");
@@ -34,8 +47,11 @@ const validateMemberData = (data) => {
     firstName: requiredString(data.firstName, "Member firstName"),
     lastName: requiredString(data.lastName, "Member lastName"),
     email: requiredEmail(data.email, "Member email"),
-    phone: requiredString(data.phone, "Member phone"),
-    membershipType: requiredString(data.membershipType, "Member membershipType"),
+    phone: requieredMinLenghtString(data.phone, "Member phone"),
+    membershipType: requiredString(
+      data.membershipType,
+      "Member membershipType",
+    ),
   };
 };
 

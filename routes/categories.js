@@ -3,6 +3,7 @@ const router = require("express").Router();
 
 // require the controllers
 const categoriesControllers = require("../controllers/categories");
+const { requireAuth } = require("../middleware/auth");
 
 // GET ALL
 router.get("/", categoriesControllers.getAll);
@@ -11,8 +12,8 @@ router.get("/", categoriesControllers.getAll);
 router.get("/:id", categoriesControllers.getSingle);
 
 // CREATE
-router.post("/", (req, res, next) => {
-	/* #swagger.parameters['body'] = {
+router.post("/", requireAuth, (req, res, next) => {
+  /* #swagger.parameters['body'] = {
 		in: 'body',
 		required: true,
 		schema: {
@@ -20,12 +21,12 @@ router.post("/", (req, res, next) => {
 			description: "Timeless novels considered part of the literary canon."
 		}
 	} */
-	categoriesControllers.createCategory(req, res, next);
+  categoriesControllers.createCategory(req, res, next);
 });
 
 // UPDATE
-router.put("/:id", (req, res, next) => {
-	/* #swagger.parameters['body'] = {
+router.put("/:id", requireAuth, (req, res, next) => {
+  /* #swagger.parameters['body'] = {
 		in: 'body',
 		required: true,
 		schema: {
@@ -33,10 +34,10 @@ router.put("/:id", (req, res, next) => {
 			description: "Timeless novels considered part of the literary canon."
 		}
 	} */
-	categoriesControllers.updateCategory(req, res, next);
+  categoriesControllers.updateCategory(req, res, next);
 });
 
 // DELETE
-router.delete("/:id", categoriesControllers.deleteCategory);
+router.delete("/:id", requireAuth, categoriesControllers.deleteCategory);
 
 module.exports = router;

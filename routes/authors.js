@@ -13,8 +13,8 @@ router.get("/:id", authorsControllers.getSingle);
 
 // CREATE (protected by GitHub OAuth)
 router.post("/", requireAuth, (req, res, next) => {
-	/* #swagger.security = [{ "Bearer": [] }] */
-	/* #swagger.parameters['body'] = {
+  /* #swagger.security = [{ "Bearer": [] }] */
+  /* #swagger.parameters['body'] = {
 		in: 'body',
 		required: true,
 		schema: {
@@ -27,13 +27,13 @@ router.post("/", requireAuth, (req, res, next) => {
 			awards: ["Nobel Prize in Literature"]
 		}
 	} */
-	authorsControllers.createAuthor(req, res, next);
+  authorsControllers.createAuthor(req, res, next);
 });
 
 // UPDATE (protected by GitHub OAuth)
 router.put("/:id", requireAuth, (req, res, next) => {
-	/* #swagger.security = [{ "Bearer": [] }] */
-	/* #swagger.parameters['body'] = {
+  /* #swagger.security = [{ "Bearer": [] }] */
+  /* #swagger.parameters['body'] = {
 		in: 'body',
 		required: true,
 		schema: {
@@ -46,10 +46,10 @@ router.put("/:id", requireAuth, (req, res, next) => {
 			awards: ["Nobel Prize in Literature"]
 		}
 	} */
-	authorsControllers.updateAuthor(req, res, next);
+  authorsControllers.updateAuthor(req, res, next);
 });
 
 // DELETE
-router.delete("/:id", authorsControllers.deleteAuthor);
+router.delete("/:id", requireAuth, authorsControllers.deleteAuthor);
 
 module.exports = router;

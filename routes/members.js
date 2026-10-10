@@ -3,6 +3,7 @@ const router = require("express").Router();
 
 // require the controllers
 const membersControllers = require("../controllers/members");
+const { requireAuth } = require("../middleware/auth");
 
 // GET ALL
 router.get("/", membersControllers.getAll);
@@ -11,8 +12,8 @@ router.get("/", membersControllers.getAll);
 router.get("/:id", membersControllers.getSingle);
 
 // CREATE
-router.post("/", (req, res, next) => {
-	/* #swagger.parameters['body'] = {
+router.post("/", requireAuth, (req, res, next) => {
+  /* #swagger.parameters['body'] = {
 		in: 'body',
 		required: true,
 		schema: {
@@ -23,12 +24,12 @@ router.post("/", (req, res, next) => {
 			membershipType: "Student"
 		}
 	} */
-	membersControllers.createMember(req, res, next);
+  membersControllers.createMember(req, res, next);
 });
 
 // UPDATE
-router.put("/:id", (req, res, next) => {
-	/* #swagger.parameters['body'] = {
+router.put("/:id", requireAuth, (req, res, next) => {
+  /* #swagger.parameters['body'] = {
 		in: 'body',
 		required: true,
 		schema: {
@@ -39,10 +40,10 @@ router.put("/:id", (req, res, next) => {
 			membershipType: "Graduate Student"
 		}
 	} */
-	membersControllers.updateMember(req, res, next);
+  membersControllers.updateMember(req, res, next);
 });
 
 // DELETE
-router.delete("/:id", membersControllers.deleteMember);
+router.delete("/:id", requireAuth, membersControllers.deleteMember);
 
 module.exports = router;
